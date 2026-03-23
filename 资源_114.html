@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>班级就业信息门户 | 一站式求职资源导航</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* 基础样式 */
+        :root {
+            --primary: #2563eb;
+            --secondary: #0d9488;
+            --accent: #c026d3;
+            --light: #f0f7ff;
+            --dark: #1e293b;
+            --success: #22c55e;
+            --warning: #f59e0b;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 头部导航 */
+        header {
+            background: linear-gradient(135deg, var(--primary), #1d4ed8);
+            color: white;
+            padding: 1.8rem 0;
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: cover;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* 快捷标签栏 - 居中+超链接+参与搜索 */
+        .quick-tags {
+            background: white;
+            padding: 1.5rem 1.5rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            align-items: center;
+            justify-content: center;
+        }
+        .quick-tags a {
+            padding: 10px 20px;
+            background: #f0f7ff;
+            border-radius: 24px;
+            font-weight: 500;
+            color: #1e293b;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.05rem;
+        }
+        .quick-tags a:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2);
+        }
+
+        /* 搜索与分类 */
+        .search-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+        #search-input {
+            visibility: hidden; /* 改为可见，方便测试 */
+            background: #f8fafc;
+            width: 100%;
+
+        }
+        #search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        .category-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top:-20px;
+            justify-content: center;
+        }
+        .category-btn {
+            padding: 10px 20px;
+            background: var(--light);
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .category-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2);
+        }
+        .category-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2);
+        }
+
+        /* 链接卡片容器 - 网格布局 */
+        .links-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1.8rem;
+            margin: 2.5rem 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        .links-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f1f5f9;
+        }
+        .links-header h3 {
+            color: var(--primary);
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 网格布局：一排3个卡片 */
+        .link-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+        }
+
+        /* 单个卡片样式 - 核心新增：首列圆形图片盒子，内部三行结构 */
+        .link-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.2rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s;
+            height: 100%;
+        }
+        /* 圆形图片盒子 - 预留位置，可直接插图片 */
+        .link-img-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid #e2e8f0;
+            flex-shrink: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+        }
+        .link-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 保证图片适配圆形盒子 */
+        }
+        /* 卡片内容区域 */
+        .link-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .link-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+        }
+
+        /* 卡片内容第一行：链接标题 */
+        .link-title a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            line-height: 1.4;
+            transition: color 0.2s;
+            display: block;
+        }
+        .link-title a:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* 卡片内容第二行：标签区域 */
+        .link-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .tag {
+            display: inline-block;
+            background: #e0f2fe;
+            color: #0369a1;
+            font-size: 0.85rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+        .tag:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .tag.gov {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .tag.school {
+            background: #f0fdf4;
+            color: #047857;
+        }
+        .tag.jobsite {
+            background: #fffbeb;
+            color: #b45309;
+        }
+        .tag.industry {
+            background: #fdf2f8;
+            color: #be185d;
+        }
+
+        /* 卡片内容第三行：简介描述 */
+        .link-desc {
+            font-size: 0.9rem;
+            color: #64748b;
+            line-height: 1.5;
+            margin-top: auto;
+        }
+
+        /* 分页样式 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 2rem;
+        }
+        .pagination-btn {
+            padding: 8px 16px;
+            background: var(--light);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        .pagination-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+        .pagination-btn:disabled {
+            background: #e2e8f0;
+            color: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .pagination-info {
+            padding: 0 12px;
+            color: #64748b;
+        }
+
+        /* 贡献区域 */
+        .contribute {
+            background: linear-gradient(to right, #f0fdfa, #ecfeff);
+            border-left: 4px solid var(--secondary);
+            padding: 1.8rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2.5rem 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .contribute h3 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .contribute p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+        .contribute a {
+            color: var(--secondary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .contribute a:hover {
+            text-decoration: underline;
+        }
+
+        /* 页脚 */
+        footer {
+            text-align: center;
+            padding: 2.5rem 0 3rem;
+            color: #64748b;
+            font-size: 0.95rem;
+            background: rgba(241, 245, 249, 0.7);
+            border-radius: 12px 12px 0 0;
+            margin-top: 2rem;
+        }
+        footer .container {
+            max-width: 800px;
+        }
+        footer p {
+            margin-bottom: 0.8rem;
+            line-height: 1.7;
+        }
+        .disclaimer {
+            background: #fffbeb;
+            padding: 1.2rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            border: 1px solid #fde68a;
+            font-size: 0.95rem;
+        }
+        .disclaimer strong {
+            color: #b45309;
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 1024px) {
+            .link-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            .category-nav {
+                gap: 8px;
+            }
+            .category-btn {
+                padding: 8px 16px;
+                font-size: 0.95rem;
+            }
+            .link-list {
+                grid-template-columns: 1fr;
+            }
+            .quick-tags {
+                gap: 12px;
+            }
+            .quick-tags a {
+                font-size: 0.95rem;
+                padding: 8px 16px;
+            }
+            .link-img-box {
+                width: 50px;
+                height: 50px;
+                overflow: hidden;
+            }
+            .sf{
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+        }
+
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .links-container, .contribute {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="container">
+        <h1><i class="fas fa-briefcase"></i> 班级就业信息门户</h1>
+        <p class="subtitle">一站式聚合权威求职资源 </p>
+    </div>
+</header>
+
+<div class="container">
+
+    <div class="quick-tags">
+        <div><h3><i class="fas fa-link"></i> 推荐资源</h3></div>
+        <a href="https://www.gongkaoleida.com/" target="_blank" rel="noopener"  >
+            <i class="fas fa-bullseye"></i> 公考雷达
+        </a>
+        <a href="https://www.yingjiesheng.com/" target="_blank" rel="noopener" >
+            <i class="fas fa-graduation-cap"></i> 应届生求职
+        </a>
+        <a href="https://www.shixiseng.com/" target="_blank" rel="noopener" >
+            <i class="fas fa-briefcase"></i>  实习僧
+        </a>
+        <a href="https://leetcode.cn/" target="_blank" rel="noopener" >
+            <i class="fas fa-code"></i> leetcode
+        </a>
+        <a href="https://www.cehuiyc.com/Person/Per_Search_JobClass.asp?PageNo=49&Param=%B2%E2%BB%E6" target="_blank" rel="noopener" >
+            <i class="fas fa-map-marker-alt"></i> 测绘英才网
+        </a>
+    </div>
+
+    <!-- 搜索与分类 -->
+    <section class="search-section">
+        <input type="text" id="search-input" placeholder="搜索求职资源...">
+        <div class="category-nav">
+            <button class="category-btn active" data-category="all">
+                <i class="fas fa-th"></i> 全部
+            </button>
+            <button class="category-btn" data-category="gov">
+                <i class="fas fa-landmark"></i> 政府与公共机构
+            </button>
+            <button class="category-btn" data-category="school">
+                <i class="fas fa-graduation-cap"></i> 高校与企业校招
+            </button>
+            <button class="category-btn" data-category="jobsite">
+                <i class="fas fa-search"></i> 主流招聘平台
+            </button>
+            <button class="category-btn" data-category="industry">
+                <i class="fas fa-industry"></i> 行业专属平台
+            </button>
+        </div>
+    </section>
+
+    <!-- 链接分类展示区 -->
+    <section class="links-container" id="linksContainer">
+        <div class="links-header">
+            <h3><i class="fas fa-link"></i> 求职资源列表</h3>
+            <span id="currentCategoryText">全部资源</span>
+        </div>
+        <div class="link-list" id="linkList">
+            <!-- 动态加载内容，卡片首列带圆形图片盒子 -->
+        </div>
+        <!-- 分页控件 -->
+        <div class="pagination">
+            <button class="pagination-btn" id="prevPage" disabled>上一页</button>
+            <span class="pagination-info" id="pageInfo">第 1 页 / 共 0 页</span>
+            <button class="pagination-btn" id="nextPage" disabled>下一页</button>
+        </div>
+    </section>
+
+    <!-- 班级贡献区 -->
+    <section class="contribute">
+        <h3><i class="fas fa-hands-helping"></i> 班级共建计划</h3>
+        <p>分享您发现的优质就业信息源，共同完善我们的资源库：</p>
+        <p>邮箱：1945304354@qq.com</p>
+        <p>提交格式：网站名称 + URL + 简单描述 + 分类建议</p>
+        <p><small>所有贡献者将在页脚展示，优质资源提交者将获得班级纪念品</small></p>
+    </section>
+</div>
+
+<footer>
+    <div class="container">
+        <div class="disclaimer">
+            <strong>免责声明：</strong>本网页仅提供就业信息渠道汇总服务，不参与任何具体招聘活动，不对链接网站内容负责。请在使用第三方网站时注意个人信息安全，谨慎判断信息真实性。本平台不保证所提供链接的长期有效性，亦不承担因使用链接内容而产生的任何责任。
+            <strong>如有侵权，请与我们联系</strong>
+        </div>
+        <p>© 2026 班级就业服务组 | 本平台仅提供信息聚合服务</p>
+        <p>邮箱：1945304354@qq.com</p>
+        <p> 技术支持：HTML5/CSS3/JavaScript</p>
+        <p>班级贡献者：安芙蓉，蒋禹宏，染</p>
+    </div>
+</footer>
+
+<script>
+    // 所有链接数据（新增imgUrl字段，使用不同的在线占位图）
+    const linkData = [
+        // 政府与公共机构
+        {
+            title: "公考雷达",
+            url: "https://www.gongkaoleida.com/download/index.html",
+            tags: ["gov", "考公", "app"],
+            desc: "考公信息整合",
+            category: "gov",
+            imgUrl: "https://www.gongkaoleida.com/home/images/must/logo.png" // 专属seed保证图片固定
+        },
+        {
+            title: "中国公共招聘网",
+            url: "http://job.mohrss.gov.cn/",
+            tags: ["gov", "国家级", "公务员", "事业单位"],
+            desc: "最权威的全国性就业平台，涵盖公务员、事业单位、央企国企",
+            category: "gov",
+            imgUrl: "https://picsum.photos/seed/jobgov/200/200"
+        },
+        {
+            title: "中央和国家机关所属事业单位公开招聘平台",
+            url: "https://www.mohrss.gov.cn/SYrlzyhshbzb/fwyd/SYkaoshizhaopin/zyhgjjgsydwgkzp/",
+            tags: ["gov", "事业单位"],
+            desc: "国家机关事业单位招聘信息官方发布渠道，提供报考指南和考试信息",
+            category: "gov",
+            imgUrl: ""
+        },
+        {
+            title: "中央企业招聘应届高校毕业生信息公开",
+            url: "http://job.mohrss.gov.cn/qyzp/index.jhtml",
+            tags: ["gov", "央企招聘"],
+            desc: "国资委监管央企校招统一平台，包含所有央企岗位信息和招聘流程",
+            category: "gov",
+            imgUrl: "",
+        },
+        {
+            title: "各省公共就业服务平台",
+            url: "http://job.mohrss.gov.cn/jy/index.jhtml",
+            tags: ["gov", "省级平台"],
+            desc: "全国各省市就业服务门户，包含地方特色岗位和政策解读",
+            category: "gov",
+            imgUrl: "https://picsum.photos/seed/省级就业/200/200"
+        },
+        {
+            title: "四川省人力资源和社会保障局",
+            url: "https://rst.sc.gov.cn/",
+            tags: ["gov", "四川省"],
+            desc: "四川本地政策与岗位信息，提供\"三支一扶\"、西部计划等特色项目",
+            category: "gov",
+            imgUrl: ""
+        },
+
+        // 高校与企业校招平台
+        {
+            title: "清华大学职业发展中心",
+            url: "https://career.tsinghua.edu.cn/",
+            tags: ["school", "顶尖高校"],
+            desc: "国内顶尖企业合作资源，提供行业分析报告和高端岗位",
+            category: "school",
+            imgUrl: "https://career.tsinghua.edu.cn/favicon.ico"
+        },
+        {
+            title: "北京大学就业信息网",
+            url: "https://scc.pku.edu.cn/",
+            tags: ["school", "名校资源"],
+            desc: "学术与产业结合紧密，实时更新企业校园活动日程",
+            category: "school",
+            imgUrl: "https://scc.pku.edu.cn/frontpage/pku/images/frontPage/favicon.ico"
+        },
+        {
+            title: "四川大学就业中心",
+            url: "http://jy.scu.edu.cn/",
+            tags: ["school", "西南名校"],
+            desc: "西南地区龙头企业校招集中，本地就业资源丰富",
+            category: "school",
+            imgUrl: "https://jy.scu.edu.cn/favicon.ico"
+        },
+        {
+            title: "华为校招官网",
+            url: "https://career.huawei.com/",
+            tags: ["school", "科技巨头"],
+            desc: "全球领先科技公司，技术岗位丰富，全球化机会多",
+            category: "school",
+            imgUrl: "https://career.huawei.com/reccampportal/portal5/favicon.ico?v=x1x120241120"
+        },
+        {
+            title: "比亚迪校招官网",
+            url: "https://job.byd.com/portal/pc/#/school/home",
+            tags: ["school", "新能源汽车"],
+            desc: "新能源汽车领域领先企业，工程类岗位需求量大",
+            category: "school",
+            imgUrl: "data:image/png;base64,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"
+        },
+        {
+            title: "宁德时代校招官网",
+            url: "https://www.catl.com/",
+            tags: ["school", "锂电池龙头"],
+            desc: "全球最大锂电池制造商，研发岗位多，技术含量高",
+            category: "school",
+            imgUrl: "https://www.catl.com/favicon.ico"
+        },
+
+        // 主流招聘平台
+        {
+            title: "应届生求职网",
+            url: "https://www.yingjiesheng.com/",
+            tags: ["jobsite", "校招", "题库"],
+            desc: "最全面的校招信息平台，笔试面试真题库，覆盖互联网/金融/快消",
+            category: "jobsite",
+            imgUrl: "https://img01.51jobcdn.com/yjs/img/logo-fda6f77.png"
+        },
+        {
+            title: "智联招聘",
+            url: "https://www.zhaopin.com/",
+            tags: ["jobsite", "全行业", "社招"],
+            desc: "老牌综合招聘平台，国企岗位丰富，覆盖行业广泛",
+            category: "jobsite",
+            imgUrl: "https://common-bucket.zhaopin.cn/img/zhilian-ico/zhilian-ico-1.0.0.png"
+        },
+        {
+            title: "前程无忧",
+            url: "https://www.51job.com/",
+            tags: ["jobsite", "南方", "全行业", "社招"],
+            desc: "外企资源丰富，南方城市岗位多，界面简洁高效",
+            category: "jobsite",
+            imgUrl: "https://fecdn.51jobcdn.com/fe/public/icons/favicon51.ico"
+        },
+        {
+            title: "LeetCode",
+            url: "https://leetcode.cn/",
+            tags: ["jobsite", "技术", "算法"],
+            desc: "技术岗必备刷题平台，含企业高频题和面试经验",
+            category: "jobsite",
+            imgUrl: "https://leetcode.cn/favicon.ico"
+        },
+        {
+            title: "拉勾网",
+            url: "https://www.lagou.com/",
+            tags: ["jobsite", "互联网", "技术"],
+            desc: "互联网垂直招聘平台，技术岗位更新快，薪资透明",
+            category: "jobsite",
+            imgUrl: "https://www.lgstatic.com/lg-www-fed/common/static/favicon_faed927.ico"
+        },
+        {
+            title: "BOSS直聘",
+            url: "https://www.bosszhipin.com/",
+            tags: ["jobsite", "直聊", "创业"],
+            desc: "直接与招聘方沟通，创业公司多，反馈速度快",
+            category: "jobsite",
+            imgUrl: "https://picsum.photos/seed/BOSS直聘/200/200"
+        },
+
+        // 行业专属平台
+        {
+            title: "测绘英才网",
+            url: "https://www.cehuiyc.com/Person/Per_Search_JobClass.asp?PageNo=49&Param=%B2%E2%BB%E6",
+            tags: ["industry", "GIS", "遥感"],
+            desc: "GIS企业招聘集中平台，涵盖遥感、地理信息系统等专业",
+            category: "industry",
+            imgUrl: "https://www.cehuiyc.com/favicon.ico"
+        },
+        {
+            title: "中国教师人才网",
+            url: "http://www.jiaoshi.com.cn/",
+            tags: ["industry", "教师", "教育"],
+            desc: "教师岗位专业平台，公办/民办学校招聘信息集中",
+            category: "industry",
+            imgUrl: "https://www.jiaoshi.com.cn/favicon.ico"
+        },
+        {
+            title: "建筑英才网",
+            url: "https://www.buildhr.com/",
+            tags: ["industry", "建筑", "工程"],
+            desc: "建筑行业专业招聘，设计院、施工单位、房地产岗位",
+            category: "industry",
+            imgUrl: "https://www.buildhr.com/favicon.ico"
+        }
+    ];
+
+    // 分页配置
+    const PAGE_SIZE = 6; // 每页显示6条（正好2行3列）
+    let currentPage = 1;
+    let currentCategory = "all";
+    let filteredData = [...linkData];
+
+    // DOM元素
+    const linkList = document.getElementById('linkList');
+    const prevPageBtn = document.getElementById('prevPage');
+    const nextPageBtn = document.getElementById('nextPage');
+    const pageInfo = document.getElementById('pageInfo');
+    const categoryBtns = document.querySelectorAll('.category-btn');
+    const currentCategoryText = document.getElementById('currentCategoryText');
+    const searchInput = document.getElementById('search-input');
+    const searchTags = document.querySelectorAll('.search-tag'); // 快捷搜索标签
+
+    // 初始化页面
+    initPage();
+
+    // 初始化函数
+    function initPage() {
+        // 1. 分类按钮事件
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentCategory = this.dataset.category;
+                currentPage = 1;
+                updateCategoryText();
+                filterData();
+                renderLinks();
+                updatePagination();
+            });
+        });
+
+        // 2. 分页按钮事件
+        prevPageBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderLinks();
+                updatePagination();
+            }
+        });
+        nextPageBtn.addEventListener('click', () => {
+            const totalPages = Math.ceil(filteredData.length / PAGE_SIZE);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderLinks();
+                updatePagination();
+            }
+        });
+
+        // 3. 搜索框输入事件
+        searchInput.addEventListener('input', function() {
+            currentPage = 1;
+            filterData();
+            renderLinks();
+            updatePagination();
+        });
+
+        // 4. 快捷标签点击事件 - 参与搜索：填充关键词+过滤+跳转
+        searchTags.forEach(tag => {
+            tag.addEventListener('click', function(e) {
+                const searchKey = this.dataset.key;
+                searchInput.value = searchKey; // 填充搜索关键词
+                currentPage = 1;
+                filterData(); // 过滤数据
+                renderLinks(); // 重新渲染
+                updatePagination(); // 更新分页
+                // 滚动到资源列表
+                document.getElementById('linksContainer').scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // 初始渲染
+        filterData();
+        renderLinks();
+        updatePagination();
+    }
+
+    // 更新分类文本
+    function updateCategoryText() {
+        const categoryNames = {
+            'all': '全部资源',
+            'gov': '政府与公共机构',
+            'school': '高校与企业校招平台',
+            'jobsite': '主流招聘平台',
+            'industry': '行业专属平台'
+        };
+        currentCategoryText.textContent = categoryNames[currentCategory];
+    }
+
+    // 过滤数据
+    function filterData() {
+        const searchKeyword = searchInput.value.toLowerCase().trim();
+        filteredData = linkData.filter(item => {
+            // 分类过滤
+            const categoryMatch = currentCategory === 'all' || item.category === currentCategory;
+            // 搜索关键词过滤（标题/描述/标签）
+            const searchMatch = !searchKeyword ||
+                item.title.toLowerCase().includes(searchKeyword) ||
+                item.desc.toLowerCase().includes(searchKeyword) ||
+                item.tags.some(tag => tag.toLowerCase().includes(searchKeyword));
+            return categoryMatch && searchMatch;
+        });
+    }
+
+    // 渲染链接列表 - 核心：绑定imgUrl到图片标签
+    function renderLinks() {
+        linkList.innerHTML = '';
+        const startIndex = (currentPage - 1) * PAGE_SIZE;
+        const endIndex = startIndex + PAGE_SIZE;
+        const pageData = filteredData.slice(startIndex, endIndex);
+
+        // 渲染每个卡片
+        pageData.forEach(item => {
+            const linkItem = document.createElement('div');
+            linkItem.className = 'link-item';
+            linkItem.dataset.category = item.category;
+
+            // 生成标签HTML
+            let tagsHtml = '';
+            item.tags.forEach(tag => {
+                let tagClass = '';
+                if (tag === 'gov' || tag.includes('考公') || tag.includes('事业单位') || tag.includes('省级') || tag.includes('中央')) tagClass = 'gov';
+                else if (tag === 'school' || tag.includes('高校') || tag.includes('校招') || tag.includes('龙头')) tagClass = 'school';
+                else if (tag === 'jobsite' || tag.includes('招聘') || tag.includes('技术') || tag.includes('算法') || tag.includes('直聊')) tagClass = 'jobsite';
+                else if (tag === 'industry' || tag.includes('GIS') || tag.includes('测绘') || tag.includes('教师') || tag.includes('建筑')) tagClass = 'industry';
+                tagsHtml += `<span class="tag ${tagClass}">${tag}</span>`;
+            });
+
+            // 卡片结构：圆形图片盒子（绑定imgUrl） + 内容区域
+            linkItem.innerHTML = `
+                <div class="link-img-box">
+                    <img class="sf" src="${item.imgUrl}" alt="${item.title}图标">
+                </div>
+                <div class="link-content">
+                    <div class="link-title">
+                        <a href="${item.url}" target="_blank" rel="noopener">${item.title}</a>
+                    </div>
+                    <div class="link-tags">
+                        ${tagsHtml}
+                    </div>
+                    <div class="link-desc">
+                        ${item.desc}
+                    </div>
+                </div>
+            `;
+            linkList.appendChild(linkItem);
+        });
+
+        // 空数据提示
+        if (pageData.length === 0) {
+            linkList.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: #64748b;">
+                    <i class="fas fa-search fa-2x" style="margin-bottom: 1rem; display: block;"></i>
+                    未找到匹配的资源，请尝试更换关键词或分类
+                </div>
+            `;
+        }
+    }
+
+    // 更新分页控件
+    function updatePagination() {
+        const totalPages = Math.ceil(filteredData.length / PAGE_SIZE);
+        pageInfo.textContent = `第 ${currentPage} 页 / 共 ${totalPages || 1} 页`;
+        prevPageBtn.disabled = currentPage <= 1;
+        nextPageBtn.disabled = currentPage >= totalPages || totalPages === 0;
+    }
+</script>
+</body>
+</html>
